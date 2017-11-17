@@ -3,7 +3,7 @@
 
 Graph::Graph()
 {
-  adjacent_matrix = ReadFile("Data/myciel3.col", &vertex_number);
+  adjacent_matrix = ReadFile("Data/miles500.col", &vertex_number);
   vertex_colors = new int[vertex_number];
   vertices = new Vertex[vertex_number];
 

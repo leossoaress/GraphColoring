@@ -5,12 +5,12 @@
 int main(){
 
   Graph graph;
-  
+
   //graph.HeuristicConstructor();
   //graph.neighbourhood_search();
-  //graph.VND();
+  graph.VND();
 
-  graph.DSATUR();
+  //graph.DSATUR();
 
   return 0;
 }
