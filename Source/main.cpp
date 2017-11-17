@@ -2,12 +2,20 @@
 
 #include <iostream>
 
-int main(){
+int main( int argc, char *argv[] ){
 
-  Graph graph;
+  std::string filename;
+
+  if( argc == 1 )                        
+    return 0;
+  else
+    filename = argv[1];
+
+  Graph graph( filename );
 
   //graph.HeuristicConstructor();
   //graph.neighbourhood_search();
+  
   graph.VND();
 
   //graph.DSATUR();

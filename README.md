@@ -36,17 +36,10 @@ make
 And next:
 
 ```
-./Build/Graphcoloring
+./Build/GraphColoring	input_file.txt/input_file.col
 ```
 
-## Change input graph
-
-There is a directory called inputs with a number of graphs to test, to change the graph that's going to be colored, in /Source/graph.cpp , on Graph::Graph():
-
-```
-adjacent_matrix = ReadFile("inputs/input-name.col", &vertex_number);
-```
-With **input-name** being the name of the .col input to be tested.
+## Find input graph
 
 To find more test inputs, click [Here](http://cse.unl.edu/~tnguyen/npbenchmarks/graphcoloring.html) or [Here](http://mat.gsia.cmu.edu/COLOR/instances.html)
 

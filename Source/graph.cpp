@@ -1,9 +1,9 @@
 #include "graph.hpp"
 #include "readmatrix.hpp"
 
-Graph::Graph()
+Graph::Graph( std::string filename )
 {
-  adjacent_matrix = ReadFile("Data/miles500.col", &vertex_number);
+  adjacent_matrix = ReadFile( filename, &vertex_number);
   vertex_colors = new int[vertex_number];
   vertices = new Vertex[vertex_number];
 

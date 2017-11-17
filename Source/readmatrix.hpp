@@ -23,7 +23,7 @@ int** AllocateArray( const int rows, const int columns )
   return m;
 }
 
-int** ReadFile( const char* filename, int *vertex_number )
+int** ReadFile( std::string filename, int *vertex_number )
 {
   std::ifstream file( filename );
 

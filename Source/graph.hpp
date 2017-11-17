@@ -5,6 +5,7 @@
 #include<fstream>
 #include <vector>
 #include <algorithm>
+#include <string>
 
 struct Vertex{
   int id;
@@ -40,7 +41,7 @@ public:
   void VND();
   void DSATUR();
 
-  Graph();
+  Graph( std::string );
 
 };
 
