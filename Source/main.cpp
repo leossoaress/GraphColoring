@@ -14,11 +14,12 @@ int main( int argc, char *argv[] ){
   Graph graph( filename );
 
   //graph.HeuristicConstructor();
-  //graph.neighbourhood_search();
   
-  graph.VND();
-
+  //graph.VND();
+  
   //graph.DSATUR();
 
+  graph.Grasp();
+  
   return 0;
 }

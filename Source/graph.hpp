@@ -21,6 +21,7 @@ class Graph{
   int* vertex_colors;
   int** adjacent_matrix;
   int CountColors( Vertex* );
+  int CountColorsGrasp( std::vector<Vertex> &vertices );
 
   Vertex* vertices;
 
@@ -29,17 +30,23 @@ class Graph{
 
   void change_vertices_color(const int,const int,int*);
   void PrintGraphColoring();
+  void PrintGraphColoring( std::vector<Vertex>& vector );
   
   bool VertexLeft();
   void OrderVertices( char );
   void SumAdjacentSaturation( const int );
   bool SearchColorAdjacentDSATUR( const int, const int );
+  void OrderVerticesGrasp( char op, std::vector<Vertex> &vector );
+  void SumAdjacentSaturationGrasp( const int id, std::vector<Vertex> &vector );
+  bool SearchColorAdjacentGrasp( const int id, const int color, std::vector<Vertex> &vector );
 
 public:
 
   Vertex* HeuristicConstructor();
+  void HeuristicConstructor( Vertex* vector );
   void VND();
   void DSATUR();
+  void Grasp();
 
   Graph( std::string );
 

@@ -38,36 +38,36 @@ void Graph::OrderVertices( char op )
   {
     case 's':
     {
-      int a;
+      int max;
 
       for( int i = 0; i < vertex_number; ++i )
       {
-        a = i;
+        max = i;
         for( int j = i + 1; j < vertex_number; ++j )
         {
-          if( vertices[j].saturation > vertices[a].saturation )
-            a = j;
-          else if( vertices[j].saturation == vertices[a].saturation && vertices[j].degree > vertices[a].degree )
-            a = j;
+          if( vertices[j].saturation > vertices[max].saturation )
+            max = j;
+          else if( vertices[j].saturation == vertices[max].saturation && vertices[j].degree > vertices[max].degree )
+            max = j;
         }
-        std::swap( vertices[i], vertices[a] );
+        std::swap( vertices[i], vertices[max] );
       }
       break;
     }
 
     case 'd':
     {
-      int a;
+      int max;
 
       for( int i = 0; i < vertex_number; ++i )
       {
-        a = i;
+        max = i;
 
         for( int j = 0; j < vertex_number; ++j )
-          if( vertices[j].degree > vertices[a].degree )
-            a = j;  
+          if( vertices[j].degree > vertices[max].degree )
+            max = j;  
       
-        std::swap( vertices[i], vertices[a] );
+        std::swap( vertices[i], vertices[max] );
       }
       break;
     }
@@ -134,10 +134,32 @@ int Graph::CountColors( Vertex* vertices )
   return colors;
 }
 
+int Graph::CountColorsGrasp( std::vector<Vertex> &vertices )
+{
+  std::vector<int> aux;
+  int colors = 0;
+
+  for( int i = 0; i < vertex_number; ++i )
+  {
+    if( !( std::find(aux.begin(), aux.end(), vertices[i].color ) != aux.end() ) )
+    {
+      aux.push_back( vertices[i].color );
+      colors++;
+    }
+  }
+  return colors;
+}
+
 void Graph::PrintGraphColoring()
 {
   for( int i = 0; i < vertex_number; ++i )
     std::cout << "V" << vertices[i].id+1 << " C" << vertices[i].color << std::endl;
+}
+
+void Graph::PrintGraphColoring( std::vector<Vertex>& vector )
+{
+  for( int i = 0; i < vertex_number; ++i )
+    std::cout << "V" << vector[i].id+1 << " C" << vector[i].color << std::endl;
 }
 
 bool Graph::SearchColorAdjacent(const int id,const int color)
@@ -158,16 +180,30 @@ Vertex* Graph::HeuristicConstructor()
   for( int i = 0; i < vertex_number; ++i )
   {
     int proposed_color = 0;
+    
     while( SearchColorAdjacent( i, proposed_color ) )
-    {
       proposed_color++;
-    }
+    
     vertices[i].color = proposed_color;
   }
 
-  PrintGraphColoring();
-
+  //std::cout << CountColors( vertices ) << std::endl;
+  //PrintGraphColoring();
   return vertices;
+}
+
+void Graph::HeuristicConstructor( Vertex* vector )
+{
+  for( int i = 0; i < vertex_number; ++i )
+  {
+    int proposed_color = 0;
+    
+    while( SearchColorAdjacent( i, proposed_color ) )
+      proposed_color++;
+    
+    vector[i].color = proposed_color;
+  }
+  
 }
 
 bool Graph::SearchColorAdjacentDSATUR( const int id, const int color )
@@ -227,4 +263,151 @@ void Graph::VND()
   PrintGraphColoring();
   std::cout << color_count << std::endl;
   
+}
+
+void Graph::OrderVerticesGrasp( char op, std::vector<Vertex> &vector )
+{
+  switch(op)
+  {
+      case 's':
+      {
+        int a;
+        Vertex temp;
+        for(unsigned int i=0;i<vector.size();i++)
+        {
+          a=i;
+          for(unsigned int j=i+1;j<vector.size();j++)
+          {
+            if(vector[j].saturation > vector[a].saturation)
+              a=j;
+            else if(vector[j].saturation == vector[a].saturation)
+            {
+              if(vector[j].degree > vector[a].degree)
+                a=j;
+            }
+          }
+          temp=vector[i];
+          vector[i]=vector[a];
+          vector[a]=temp;
+        }
+        break;
+      }
+      case 'd':
+      {
+        int a;
+        Vertex temp;
+        for(unsigned int i=0;i<vector.size();i++)
+        {
+          a=i;
+          for(unsigned int j=i+1;j<vector.size();j++)
+          {
+            if(vector[j].degree > vector[a].degree)
+              a=j;
+          }
+          temp=vector[i];
+          vector[i]=vector[a];
+          vector[a]=temp;
+        }
+        break;
+      }
+    }
+}
+
+void Graph::SumAdjacentSaturationGrasp( const int id, std::vector<Vertex> &vector )
+{
+  for( int i = 0; i < vertex_number; ++i )
+    if( adjacent_matrix[id][i] != 0 )
+      for( unsigned int j = 0; j < vector.size(); ++j )
+        if( !vector[j].colored && vector[j].id == i)
+          vector[j].saturation++;
+}
+
+bool Graph::SearchColorAdjacentGrasp( const int id, const int color, std::vector<Vertex> &vector )
+{
+
+  for( int j = 0; j < vertex_number; ++j )
+  {
+    if( adjacent_matrix[id][j] != 0 )
+    {
+      if(vector[j].color == color )
+        return true;
+    }
+  }
+  return false;
+
+  /*
+  for( int j = 0; j < vertex_number; ++j )
+  {
+    if( adjacent_matrix[id][j] != 0 )
+    {
+      for( unsigned int i = 0; vector.size(); ++i )
+        if( vector[i].id == j && vector[i].color == color )
+          return true;
+    }
+  }
+  return false;*/
+}
+
+void Graph::Grasp()
+{
+  Vertex* basesolution = new Vertex[vertex_number];
+  basesolution = vertices;  
+
+  std::vector<Vertex> basesolution_;
+  
+  HeuristicConstructor( basesolution );
+
+  for( int i = 0; i < vertex_number; ++i )
+    basesolution_.push_back( basesolution[i] );
+
+  int solution = CountColorsGrasp( basesolution_ );
+
+  for( int p = 0; p < 50; p++ )
+  {
+    
+    std::vector<int> actualcolors;
+
+    for( int l = 0; l < vertex_number; ++l )
+      if( !( std::find( actualcolors.begin(), actualcolors.end(), basesolution[l].color ) != actualcolors.end() ) )
+        actualcolors.push_back( basesolution_[l].color );
+      
+    int i = rand()%(solution-0 + 1) + 0;
+
+    if( !(std::find( actualcolors.begin(), actualcolors.end(), i ) != actualcolors.end()) )
+      continue;
+
+    for( int j = 0; j < vertex_number; ++j )
+    {
+      if( basesolution_[j].color == i )
+      {
+        for( int k = 0; k < solution; ++k )
+        {
+          if( k != i && ( std::find( actualcolors.begin(), actualcolors.end(), k ) != actualcolors.end() ) )
+          {
+            if( !SearchColorAdjacentGrasp( basesolution_[j].id, k, basesolution_ ) )
+            {
+              basesolution_[j].color = k;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    for( int l = 0 ; l < vertex_number; ++l )
+    {
+      if( !( std::find( actualcolors.begin(), actualcolors.end(), basesolution_[l].color ) != actualcolors.end() ) )
+      {
+        actualcolors.push_back( basesolution_[l].color );
+      }
+    }
+    
+
+    int color_count = CountColorsGrasp( basesolution_ );
+
+    if( color_count < solution )
+      solution = color_count;
+
+    std::cout << "Numero de cores: " << solution << std::endl;
+  }
 }
